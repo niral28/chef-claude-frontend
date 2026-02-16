@@ -712,34 +712,36 @@ function VoiceAssistantUI() {
   };
 
   return (
-    <div className="flex flex-col items-center w-full h-full flex-1">
+    <div className="flex flex-col items-center w-full h-full flex-1 relative">
+      {/* Floating camera PiP overlay */}
+      {isCameraEnabled && cameraPublication?.track && (
+        <div className="absolute top-2 right-2 z-20 w-32 h-24 rounded-xl overflow-hidden border-2 border-zinc-600 shadow-lg shadow-black/40">
+          <VideoTrack
+            trackRef={{
+              participant: localParticipant.localParticipant,
+              publication: cameraPublication,
+              source: Track.Source.Camera,
+            }}
+            style={{ width: "100%", height: "100%", objectFit: "cover", ...(facingMode === "user" ? { transform: "scaleX(-1)" } : {}) }}
+          />
+          <button
+            onClick={flipCamera}
+            className="absolute bottom-1 right-1 bg-black/60 rounded-full p-1 hover:bg-black/80 transition-colors"
+            title="Flip camera"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M11 19H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5" />
+              <path d="M13 5h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-5" />
+              <circle cx="12" cy="12" r="3" />
+              <path d="m18 22-3-3 3-3" />
+              <path d="m6 2 3 3-3 3" />
+            </svg>
+          </button>
+        </div>
+      )}
+
       {/* Scrollable content area */}
       <div className="flex-1 w-full overflow-y-auto flex flex-col items-center gap-4 pb-4">
-        {isCameraEnabled && cameraPublication?.track && (
-          <div className="relative w-full max-w-sm rounded-xl overflow-hidden border border-zinc-700">
-            <VideoTrack
-              trackRef={{
-                participant: localParticipant.localParticipant,
-                publication: cameraPublication,
-                source: Track.Source.Camera,
-              }}
-              style={videoStyle}
-            />
-            <button
-              onClick={flipCamera}
-              className="absolute top-2 right-2 bg-black/50 rounded-full p-2 hover:bg-black/70 transition-colors"
-              title="Flip camera"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M11 19H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5" />
-                <path d="M13 5h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-5" />
-                <circle cx="12" cy="12" r="3" />
-                <path d="m18 22-3-3 3-3" />
-                <path d="m6 2 3 3-3 3" />
-              </svg>
-            </button>
-          </div>
-        )}
         {cameraRequest && !isCameraEnabled && (
           <div className="w-full max-w-md flex items-center justify-between bg-orange-900/50 rounded-lg px-4 py-3 border border-orange-700 animate-pulse">
             <span className="text-orange-200">Chef Claude wants to see what you're working on</span>
